@@ -9,69 +9,89 @@ import {
   Pressable,
   Alert,
 } from "react-native";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MaterialIcons, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { UserType } from "../context/UserContext";
+import jwt_decode from "jwt-decode";
 
 const LoginScreen = () => {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { userData, setUserData } = useContext(UserType);
   const navigation = useNavigation();
-  // useEffect(() => {
-  //   const checkLoginStatus = async () => {
-  //     try {
-  //       const token = await AsyncStorage.getItem("authToken");
-  //       if (token) {
-  //         setTimeout(() => {
-  //           navigation.replace("Main");
-  //         }, 400);
-  //       }
-  //     } catch (err) {
-  //       console.log("Error", err);
-  //     }
-  //   };
 
-  //   checkLoginStatus();
-  // }, []);
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem("authToken");
+      axios({
+        method: "get",
+        url: "http://192.168.1.6:5000/api/me",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          // console.log(res.data);
+          setUserData(res.data);
+          if (!res.error) {
+            setTimeout(() => {
+              navigation.replace("Home");
+            }, 400);
+          }
+        })
+        .catch((err) => {
+          Alert.alert("Login failed", "Something went wrong");
+          console.log("Error", err);
+        });
+    };
 
-  // const handleLogin = () => {
-  //   const user = {
-  //     email: email,
-  //     password: password,
-  //   };
+    checkLoginStatus();
+  }, []);
 
-  //   axios({
-  //     method: "post",
-  //     url: "http://192.168.1.6:5000/login",
-  //     data: user,
-  //   })
-  //     .then((res) => {
-  //       console.log(res);
-  //       const token = res.data.token;
+  const handleLogin = () => {
+    const passenger = {
+      email: email,
+      password: password,
+    };
 
-  //       AsyncStorage.setItem("authToken", token);
-  //       navigation.navigate("Main");
-  //     })
-  //     .catch((err) => {
-  //       Alert.alert("Login failed", "Something went wrong");
-  //       console.log("Error", err);
-  //     });
-  // };
+    axios({
+      method: "post",
+      url: "http://192.168.1.6:5000/api/login",
+      data: passenger,
+    })
+      .then((res) => {
+        // console.log(res);
+        setUserData(res.data.passenger);
+        const token = res.data.token;
+
+        AsyncStorage.setItem("authToken", token);
+        navigation.navigate("Home");
+      })
+      .catch((err) => {
+        console.log("Error", err);
+      });
+  };
 
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
     >
       <View style={{ marginTop: 50, marginBottom: 100 }}>
-        {/* <Image
+        <Image
           style={{
             width: 200,
             height: 100,
             resizeMode: "contain",
-            tintColor: "black",
+            // tintColor: "black",
           }}
-          source={require("../assets/aweera.png")}
-        /> */}
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Booking.com_logo.svg/2560px-Booking.com_logo.svg.png",
+          }}
+          // source={require("../assets/aweera.png")}
+        />
       </View>
 
       <KeyboardAvoidingView>
@@ -99,15 +119,15 @@ const LoginScreen = () => {
               color='gray'
             />
             <TextInput
-              //   value={email}
-              // onChangeText={}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
               placeholderTextColor={"gray"}
-              //   style={{
-              //     color: "gray",
-              //     marginVertical: 10,
-              //     width: 300,
-              //     fontSize: email ? 16 : 16,
-              //   }}
+              style={{
+                color: "gray",
+                marginVertical: 10,
+                width: 300,
+                fontSize: email ? 16 : 16,
+              }}
               placeholder='Enter your email'
             />
           </View>
@@ -132,15 +152,15 @@ const LoginScreen = () => {
             />
             <TextInput
               secureTextEntry={true}
-              //   value={password}
-              // onChangeText={}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
               placeholderTextColor={"gray"}
-              //   style={{
-              //     color: "gray",
-              //     marginVertical: 10,
-              //     width: 300,
-              //     fontSize: password ? 16 : 16,
-              //   }}
+              style={{
+                color: "gray",
+                marginVertical: 10,
+                width: 300,
+                fontSize: password ? 16 : 16,
+              }}
               placeholder='Enter your password'
             />
           </View>
@@ -160,7 +180,7 @@ const LoginScreen = () => {
         </View>
         <View style={{ marginTop: 45 }}>
           <Pressable
-            onPress={() => navigation.navigate("Home")}
+            onPress={handleLogin}
             style={{
               width: 200,
               backgroundColor: "#2780e3",

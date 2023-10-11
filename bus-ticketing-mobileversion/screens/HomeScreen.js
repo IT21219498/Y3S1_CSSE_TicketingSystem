@@ -1,9 +1,12 @@
 import { Pressable, StyleSheet, Text, View, SafeAreaView } from "react-native";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { UserType } from "../context/UserContext";
+import jwt_decode from "jwt-decode";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+
   return (
     <SafeAreaView>
       <View>
