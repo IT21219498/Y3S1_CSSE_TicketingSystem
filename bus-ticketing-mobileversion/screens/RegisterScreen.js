@@ -11,7 +11,13 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useState } from "react";
-import { MaterialIcons, AntDesign, Ionicons } from "@expo/vector-icons";
+import {
+  MaterialIcons,
+  AntDesign,
+  Ionicons,
+  FontAwesome,
+  Entypo,
+} from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 
@@ -58,15 +64,12 @@ const RegisterScreen = () => {
       <View style={{ marginTop: 10 }}>
         <Image
           style={{
-            width: 200,
-            height: 100,
+            width: 240,
+            height: 120,
             resizeMode: "contain",
             // tintColor: "black",
           }}
-          // source={require("../assets/aweera.png")}
-          source={{
-            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Booking.com_logo.svg/2560px-Booking.com_logo.svg.png",
-          }}
+          source={require("../assets/logo/logo2.png")}
         />
       </View>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -153,11 +156,11 @@ const RegisterScreen = () => {
                 borderRadius: 5,
               }}
             >
-              <Ionicons
+              <FontAwesome
                 style={{ marginLeft: 8 }}
-                name='person'
+                name='id-card'
                 size={24}
-                color='grey'
+                color='gray'
               />
               <TextInput
                 value={nic}
@@ -186,11 +189,11 @@ const RegisterScreen = () => {
                 borderRadius: 5,
               }}
             >
-              <Ionicons
+              <Entypo
                 style={{ marginLeft: 8 }}
-                name='person'
+                name='address'
                 size={24}
-                color='grey'
+                color='gray'
               />
               <TextInput
                 value={address}
@@ -218,11 +221,11 @@ const RegisterScreen = () => {
                 borderRadius: 5,
               }}
             >
-              <Ionicons
+              <Entypo
                 style={{ marginLeft: 8 }}
-                name='person'
+                name='old-phone'
                 size={24}
-                color='grey'
+                color='gray'
               />
               <TextInput
                 value={contact}
@@ -253,7 +256,7 @@ const RegisterScreen = () => {
             >
               <AntDesign
                 style={{ marginLeft: 8 }}
-                name='lock'
+                name='unlock'
                 size={24}
                 color='gray'
               />
@@ -313,7 +316,7 @@ const RegisterScreen = () => {
           onPress={handleRegister}
           style={{
             width: 200,
-            backgroundColor: "#2780e3",
+            backgroundColor: "#0718C4",
             padding: 15,
             marginTop: 40,
             marginLeft: "auto",

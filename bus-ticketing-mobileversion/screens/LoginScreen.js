@@ -38,12 +38,11 @@ const LoginScreen = () => {
           setUserData(res.data);
           if (!res.error) {
             setTimeout(() => {
-              navigation.replace("Home");
+              navigation.replace("Main");
             }, 400);
           }
         })
         .catch((err) => {
-          Alert.alert("Login failed", "Something went wrong");
           console.log("Error", err);
         });
     };
@@ -68,7 +67,7 @@ const LoginScreen = () => {
         const token = res.data.token;
 
         AsyncStorage.setItem("authToken", token);
-        navigation.navigate("Home");
+        navigation.navigate("Main");
       })
       .catch((err) => {
         console.log("Error", err);
@@ -82,15 +81,12 @@ const LoginScreen = () => {
       <View style={{ marginTop: 50, marginBottom: 100 }}>
         <Image
           style={{
-            width: 200,
-            height: 100,
+            width: 240,
+            height: 120,
             resizeMode: "contain",
             // tintColor: "black",
           }}
-          source={{
-            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Booking.com_logo.svg/2560px-Booking.com_logo.svg.png",
-          }}
-          // source={require("../assets/aweera.png")}
+          source={require("../assets/logo/logo2.png")}
         />
       </View>
 
@@ -183,7 +179,7 @@ const LoginScreen = () => {
             onPress={handleLogin}
             style={{
               width: 200,
-              backgroundColor: "#2780e3",
+              backgroundColor: "#0718C4",
               padding: 15,
               marginTop: 40,
               marginLeft: "auto",
