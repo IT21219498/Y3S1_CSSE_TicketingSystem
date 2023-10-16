@@ -10,6 +10,12 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 
+/**
+ * A functional component that renders the main header of the mobile app.
+ * @param {Object} props - The props object that contains the title of the header.
+ * @param {string} props.title - The title of the header.
+ * @returns {JSX.Element} - The JSX code that renders the main header.
+ */
 const Header = ({ title }) => {
   const navigation = useNavigation();
   return (

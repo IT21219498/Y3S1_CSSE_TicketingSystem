@@ -16,6 +16,10 @@ import {
 import { useCallback, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 
+/**
+ * The main component of the Bus Ticketing mobile application.
+ * @returns {JSX.Element} The JSX element representing the application.
+ */
 export default function App() {
   const [fontsLoaded] = useFonts({
     Poppins_300Light,
@@ -28,14 +32,19 @@ export default function App() {
   });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  /**
+   * Callback function to hide the splash screen when the root view is laid out.
+   */
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <>
       <NavigationContainer>

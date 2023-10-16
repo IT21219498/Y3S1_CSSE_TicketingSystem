@@ -16,7 +16,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { UserType } from "../context/UserContext";
 import jwt_decode from "jwt-decode";
+import { BASE_URL } from "@env";
 
+/**
+ * Login screen component for the bus ticketing mobile application.
+ * Allows users to log in to their account using their email and password.
+ * If the user is already logged in, they will be redirected to the main screen.
+ * @returns {JSX.Element} Login screen UI.
+ */
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,45 +33,47 @@ const LoginScreen = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const token = await AsyncStorage.getItem("authToken");
-      axios({
-        method: "get",
-        url: "http://192.168.1.6:5000/api/me",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => {
-          // console.log(res.data);
-          setUserData(res.data);
-          if (!res.error) {
-            setTimeout(() => {
-              navigation.replace("Main");
-            }, 400);
-          }
+
+      if (token) {
+        axios({
+          method: "get",
+          url: `${BASE_URL}/me`,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         })
-        .catch((err) => {
-          console.log("Error", err);
-        });
+          .then((res) => {
+            setUserData(res.data);
+            if (!res.error) {
+              setTimeout(() => {
+                navigation.replace("Main");
+              }, 400);
+            }
+          })
+          .catch((err) => {
+            console.log("Error", err);
+          });
+      }
     };
 
     checkLoginStatus();
   }, []);
 
   const handleLogin = () => {
-    const passenger = {
+    const user = {
       email: email,
       password: password,
     };
 
     axios({
       method: "post",
-      url: "http://192.168.1.6:5000/api/login",
-      data: passenger,
+      url: `http://192.168.1.22:5000/api/login`,
+      data: user,
     })
       .then((res) => {
         // console.log(res);
-        setUserData(res.data.passenger);
-        const token = res.data.token;
+        setUserData(res.data.user);
+        const token = res.data.jwtToken;
 
         AsyncStorage.setItem("authToken", token);
         navigation.navigate("Main");
@@ -204,7 +213,7 @@ const LoginScreen = () => {
           >
             <Text style={{ textAlign: "center", fontSize: 16 }}>
               Don't have an account?{" "}
-              <Text style={{ color: "#007FFF", marginLeft: 10 }}>Sign up</Text>
+              <Text style={{ color: "#007FFF", marginLeft: 10 }}>Register</Text>
             </Text>
           </Pressable>
         </View>

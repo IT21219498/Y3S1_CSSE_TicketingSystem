@@ -17,11 +17,20 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 import PaymentScreen from "./screens/PaymentScreen";
+import PassengersScreen from "./screens/PassengersScreen";
 
+/**
+ * StackNavigator component that creates a stack navigator and a bottom tab navigator
+ * @returns {JSX.Element} JSX element containing the stack navigator and bottom tab navigator
+ */
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createMaterialBottomTabNavigator();
 
+  /**
+   * Bottomtabs component that creates a bottom tab navigator with three screens
+   * @returns {JSX.Element} JSX element containing the bottom tab navigator
+   */
   function Bottomtabs() {
     return (
       <Tab.Navigator
@@ -77,6 +86,7 @@ const StackNavigator = () => {
       </Tab.Navigator>
     );
   }
+
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -107,6 +117,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name='Payment'
         component={PaymentScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name='Passenger'
+        component={PassengersScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

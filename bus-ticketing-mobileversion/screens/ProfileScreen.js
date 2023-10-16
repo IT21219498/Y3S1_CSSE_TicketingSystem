@@ -6,22 +6,36 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserType } from "../context/UserContext";
 import { useNavigation } from "@react-navigation/native";
 
+/**
+ * Profile screen component.
+ * @module ProfileScreen
+ * @see {@link https://reactnavigation.org/docs/stack-navigator/}
+ */
+
 const ProfileScreen = () => {
   const { userData, setUserData } = useContext(UserType);
   const navigation = useNavigation();
 
+  /**
+   * Logout function.
+   * @function logout
+   * @returns {void}
+   */
   const logout = () => {
     clearAuthToken();
   };
 
+  /**
+   * Clear auth token from async storage and navigate to login screen.
+   * @function clearAuthToken
+   * @async
+   * @returns {void}
+   */
   const clearAuthToken = async () => {
     await AsyncStorage.removeItem("authToken");
-
-    setUserData(null);
-
-    console.log("token removed");
-
     navigation.replace("Login");
+    setUserData(null);
+    console.log("token removed");
   };
 
   return (

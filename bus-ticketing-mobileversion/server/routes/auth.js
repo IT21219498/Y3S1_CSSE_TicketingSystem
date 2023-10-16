@@ -1,105 +1,47 @@
-const router = require("express").Router();
+import express from "express";
+import User from "../models/User.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import auth from "../middlewares/auth.js";
 
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const router = express.Router();
 
-const Passenger = require("../models/Passenger");
-const auth = require("../middlewares/auth");
+//register route
+router.post("/register", async (req, res) => {
+  const { email, password, role } = req.body;
 
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
+  //check all fields
   if (!email || !password)
     return res
       .status(400)
-      .json({ error: `Please enter both email and password` });
+      .json({ error: `Please enter all the required fields.` });
 
-  //email validation
-  const emailReg =
+  const emailRegEx =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  if (!emailReg.test(email))
+  //check email
+  if (!emailRegEx.test(email))
     return res
       .status(400)
-      .json({ error: `Please enter a valid email address` });
+      .json({ error: `Please enter a valid email address.` });
+
+  //check password
+  if (password.length <= 6)
+    return res
+      .status(400)
+      .json({ error: `Password must be more than 7 caharacters ` });
   try {
-    const doesPassengerExist = await Passenger.findOne({ email });
+    const alreadyExist = await User.findOne({ email });
 
-    if (!doesPassengerExist)
-      return res.status(400).json({ error: `Invalid email or password!` });
+    if (alreadyExist)
+      return res.status(400).json({
+        error: `email [${email}] already exists in the system.`,
+      });
+    const encryptedPass = await bcrypt.hash(password, 12);
+    const newUser = User({ email, password: encryptedPass });
 
-    //if there were any user present
-
-    const doesPasswordExist = await bcrypt.compare(
-      password,
-      doesPassengerExist.password
-    );
-
-    if (!doesPasswordExist)
-      return res.status(400).json({ error: `Invalid email or password!` });
-
-    const payload = { _id: doesPassengerExist._id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    const passenger = { ...doesPassengerExist._doc, password: undefined };
-
-    return res.status(200).json({ token, passenger });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: err.message });
-  }
-});
-
-router.post("/register", async (req, res) => {
-  const { name, email, nic, address, contact, password } = req.body;
-
-  //<check all the missing fields>
-  //status 400 is for Bad User Input
-  if (!name || !email || !password || !contact || !address || !nic)
-    return res
-      .status(400)
-      .json({ error: `Please enter all the required fields` });
-
-  //name validation
-  if (name.length > 25)
-    return res
-      .status(400)
-      .json({ error: `Username can only be a maximum of 25 characters` });
-  //email validation
-  const emailReg =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-  if (!emailReg.test(email))
-    return res
-      .status(400)
-      .json({ error: `Please enter a valid email address` });
-
-  //password validation
-  if (password.length < 6)
-    return res
-      .status(400)
-      .json({ error: `Password must be have atleast 6 characters` });
-  try {
-    const doesPassengerAlreadyExist = await Passenger.findOne({ email });
-
-    if (doesPassengerAlreadyExist)
-      return res
-        .status(400)
-        .json({ error: `User with that email [${email}] already exist` });
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const newPassenger = new Passenger({
-      name,
-      email,
-      nic,
-      address,
-      contact,
-      password: hashedPassword,
-    });
-
-    //saved the user
-    const result = await newPassenger.save();
+    //save user
+    const result = await newUser.save();
 
     result._doc.password = undefined;
 
@@ -110,13 +52,65 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// route for login
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    return res
+      .status(400)
+      .json({ error: `Please enter all the required fields.` });
+
+  //check email
+  /**
+   * Regular expression for validating email addresses.
+   *
+   * @type {RegExp}
+   * @memberof module:routes/auth
+   */
+  const emailRegEx =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  //check email
+  if (!emailRegEx.test(email))
+    return res
+      .status(400)
+      .json({ error: `Please enter a valid email address.` });
+  try {
+    const isUserExist = await User.findOne({ email });
+
+    if (!isUserExist)
+      return res.status(400).json({ error: "Invalid email or password." });
+
+    //if email exists match password
+    const isPsswordMatch = await bcrypt.compare(password, isUserExist.password);
+
+    if (!isPsswordMatch)
+      return res.status(400).json({ error: "Invalid email or password." });
+
+    //generate token:
+    const payload = { _id: isUserExist._id }; //id of the user as payload
+
+    const jwtToken = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "6h",
+    });
+
+    const user = { ...isUserExist._doc, password: undefined };
+    return res.status(200).json({ jwtToken, user });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+//route for check login status
 router.get("/me", auth, async (req, res) => {
   try {
-    // console.log(...req.passenger._doc);
-    return res.status(200).json({ ...req.passenger._doc });
+    // console.log(res);
+    return res.status(200).json({ ...req.user._doc });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 });
 
-module.exports = router;
+export default router;

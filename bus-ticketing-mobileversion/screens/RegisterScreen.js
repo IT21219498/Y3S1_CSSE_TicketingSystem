@@ -20,43 +20,83 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import PassengerDetails from "../components/PassengerDetails";
+import PaymentDetails from "../components/PaymentDetails";
+import { BASE_URL } from "@env";
 
+/**
+ * Functional component for the Register Screen.
+ * @returns {JSX.Element} JSX element containing the Register Screen UI.
+ */
 const RegisterScreen = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [nic, setNIC] = useState("");
-  const [address, setAddress] = useState("");
-  const [contact, setContact] = useState("");
-  const [password, setPassword] = useState("");
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    nic: "",
+    contactNo: "",
+    address: "",
+    accBalance: "",
+    type: "ONLINE",
+    password: "",
+    confirmPassword: "",
+    created: false,
+  });
   const navigation = useNavigation();
+  const [currentPage, setCurrentPage] = useState(1);
 
+  /**
+   * Handles the registration process when the Register button is pressed.
+   * Sends a POST request to the server to create a new permanent passenger account.
+   * Navigates to the Login Screen upon successful registration.
+   * Displays an error message if registration fails.
+   */
   const handleRegister = () => {
-    const passenger = {
-      name: name,
-      email: email,
-      nic: nic,
-      address: address,
-      contact: contact,
-      password: password,
-    };
+    console.log(userData);
+    if (
+      !userData.name ||
+      !userData.email ||
+      !userData.nic ||
+      !userData.address ||
+      !userData.contactNo ||
+      !userData.password ||
+      !userData.confirmPassword
+    ) {
+      Alert.alert("Please enter all the required fields!");
+      return;
+    }
+
+    //check if the password and confirm password match
+    if (userData.password !== userData.confirmPassword) {
+      Alert.alert("password do not match");
+      return;
+    }
 
     axios
-      .post("http://192.168.1.6:5000/api/register", passenger)
+      .post(`${BASE_URL}/createPermanantPassenger`, userData)
       .then((res) => {
         console.log(res);
         Alert.alert("Passenger Registered Successfully");
-        setName("");
-        setEmail("");
-        setNIC("");
-        setAddress("");
-        setContact("");
-        setPassword("");
+        navigation.navigate("Login");
       })
       .catch((err) => {
         Alert.alert("Registration failed", "Something went wrong");
         console.log("Error", err);
       });
   };
+
+  /**
+   * Handles the page number when the Next or Back button is pressed.
+   * Toggles between page 1 and page 2.
+   * @param {Object} event - The event object.
+   */
+  function pageNumberHandler(event) {
+    if (currentPage === 1) {
+      setCurrentPage(2);
+    } else if (currentPage === 2) {
+      setCurrentPage(1);
+    }
+  }
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
@@ -72,253 +112,53 @@ const RegisterScreen = () => {
           source={require("../assets/logo/logo2.png")}
         />
       </View>
+
       <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ fontSize: 17, fontWeight: "bold", marginTop: 10 }}>
-          Register to Your Account
+        <Text style={{ fontSize: 17, fontWeight: "bold", marginTop: 1 }}>
+          {currentPage === 1 ? "Enter Your Details" : "Enter Payment Details"}
         </Text>
       </View>
-      <ScrollView>
-        <KeyboardAvoidingView>
-          <View style={{ marginTop: 40 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-                borderColor: "#D0D0D0",
-                borderWidth: 1,
-                paddingVertical: 5,
-                borderRadius: 5,
-              }}
-            >
-              <Ionicons
-                style={{ marginLeft: 8 }}
-                name='person'
-                size={24}
-                color='grey'
-              />
-              <TextInput
-                value={name}
-                onChangeText={(text) => setName(text)}
-                placeholderTextColor={"gray"}
-                style={{
-                  color: "gray",
-                  marginVertical: 10,
-                  width: 300,
-                  fontSize: name ? 16 : 16,
-                }}
-                placeholder='Enter your name'
-              />
-            </View>
-          </View>
-          <View style={{ marginTop: 30 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-                borderColor: "#D0D0D0",
-                borderWidth: 1,
-                paddingVertical: 5,
-                borderRadius: 5,
-              }}
-            >
-              <MaterialIcons
-                style={{ marginLeft: 8 }}
-                name='email'
-                size={24}
-                color='gray'
-              />
-              <TextInput
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-                placeholderTextColor={"gray"}
-                style={{
-                  color: "gray",
-                  marginVertical: 10,
-                  width: 300,
-                  fontSize: email ? 16 : 16,
-                }}
-                placeholder='Enter your email'
-              />
-            </View>
-          </View>
 
-          <View style={{ marginTop: 30 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-                borderColor: "#D0D0D0",
-                borderWidth: 1,
-                paddingVertical: 5,
-                borderRadius: 5,
-              }}
-            >
-              <FontAwesome
-                style={{ marginLeft: 8 }}
-                name='id-card'
-                size={24}
-                color='gray'
-              />
-              <TextInput
-                value={nic}
-                onChangeText={(text) => setNIC(text)}
-                placeholderTextColor={"gray"}
-                style={{
-                  color: "gray",
-                  marginVertical: 10,
-                  width: 300,
-                  fontSize: nic ? 16 : 16,
-                }}
-                placeholder='Enter your NIC'
-              />
-            </View>
-          </View>
+      {currentPage === 1 && (
+        <PassengerDetails userData={userData} setUserData={setUserData} />
+      )}
+      {currentPage === 2 && (
+        <PaymentDetails userData={userData} setUserData={setUserData} />
+      )}
 
-          <View style={{ marginTop: 30 }}>
-            <View
+      <View style={{ marginTop: 1, marginBottom: 10 }}>
+        {currentPage === 2 && (
+          <Pressable
+            onPress={handleRegister}
+            style={{
+              width: 200,
+              backgroundColor: "#0718C4",
+              padding: 15,
+              marginTop: 80,
+              marginLeft: "auto",
+              marginRight: "auto",
+              borderRadius: 6,
+            }}
+          >
+            <Text
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-                borderColor: "#D0D0D0",
-                borderWidth: 1,
-                paddingVertical: 5,
-                borderRadius: 5,
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: 16,
+                color: "white",
               }}
             >
-              <Entypo
-                style={{ marginLeft: 8 }}
-                name='address'
-                size={24}
-                color='gray'
-              />
-              <TextInput
-                value={address}
-                onChangeText={(text) => setAddress(text)}
-                placeholderTextColor={"gray"}
-                style={{
-                  color: "gray",
-                  marginVertical: 10,
-                  width: 300,
-                  fontSize: address ? 16 : 16,
-                }}
-                placeholder='Enter your Address'
-              />
-            </View>
-          </View>
-          <View style={{ marginTop: 30 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-                borderColor: "#D0D0D0",
-                borderWidth: 1,
-                paddingVertical: 5,
-                borderRadius: 5,
-              }}
-            >
-              <Entypo
-                style={{ marginLeft: 8 }}
-                name='old-phone'
-                size={24}
-                color='gray'
-              />
-              <TextInput
-                value={contact}
-                onChangeText={(text) => setContact(text)}
-                placeholderTextColor={"gray"}
-                style={{
-                  color: "gray",
-                  marginVertical: 10,
-                  width: 300,
-                  fontSize: contact ? 16 : 16,
-                }}
-                placeholder='Enter your Contact Number'
-              />
-            </View>
-          </View>
-
-          <View style={{ marginTop: 30 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-                borderColor: "#D0D0D0",
-                borderWidth: 1,
-                paddingVertical: 5,
-                borderRadius: 5,
-              }}
-            >
-              <AntDesign
-                style={{ marginLeft: 8 }}
-                name='unlock'
-                size={24}
-                color='gray'
-              />
-              <TextInput
-                secureTextEntry={true}
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-                placeholderTextColor={"gray"}
-                style={{
-                  color: "gray",
-                  marginVertical: 10,
-                  width: 300,
-                  fontSize: password ? 16 : 16,
-                }}
-                placeholder='Enter your password'
-              />
-            </View>
-          </View>
-          <View style={{ marginTop: 30 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-                borderColor: "#D0D0D0",
-                borderWidth: 1,
-                paddingVertical: 5,
-                borderRadius: 5,
-              }}
-            >
-              <AntDesign
-                style={{ marginLeft: 8 }}
-                name='lock'
-                size={24}
-                color='gray'
-              />
-              <TextInput
-                secureTextEntry={true}
-                // value={password}
-                // onChangeText={(text) => setPassword(text)}
-                placeholderTextColor={"gray"}
-                style={{
-                  color: "gray",
-                  marginVertical: 10,
-                  width: 300,
-                  fontSize: password ? 16 : 16,
-                }}
-                placeholder='Confirm your password'
-              />
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </ScrollView>
-
-      <View style={{ marginTop: 20, marginBottom: 10 }}>
+              Register
+            </Text>
+          </Pressable>
+        )}
         <Pressable
-          onPress={handleRegister}
+          onPress={(event) => pageNumberHandler(event)}
           style={{
             width: 200,
             backgroundColor: "#0718C4",
             padding: 15,
-            marginTop: 40,
+            marginTop: 20,
             marginLeft: "auto",
             marginRight: "auto",
             borderRadius: 6,
@@ -332,7 +172,7 @@ const RegisterScreen = () => {
               color: "white",
             }}
           >
-            Register
+            {currentPage === 1 ? "Next" : "Back"}
           </Text>
         </Pressable>
         <Pressable

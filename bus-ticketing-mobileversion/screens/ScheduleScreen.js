@@ -3,6 +3,11 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/MainHeader";
 
+/**
+ * A screen component that displays the bus schedules.
+ *
+ * @returns {JSX.Element} The ScheduleScreen component.
+ */
 const ScheduleScreen = () => {
   return (
     <SafeAreaView style={{ backgroundColor: "white", height: 1000 }}>

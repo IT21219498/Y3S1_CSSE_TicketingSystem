@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Button, Pressable } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "./MainHeader";
 
+/**
+ * Renders a QR scanner component that allows the user to scan a QR code and navigate to the Passenger screen with the ticket ID.
+ * @returns {JSX.Element} The QR scanner component.
+ */
 export default function QRScanner() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -17,9 +23,19 @@ export default function QRScanner() {
     getBarCodeScannerPermissions();
   }, []);
 
+  /**
+   * Handles the scanned QR code data and navigates to the Passenger screen with the ticket ID.
+   * @param {Object} param0 - The scanned QR code data.
+   * @param {string} param0.type - The type of the scanned QR code.
+   * @param {string} param0.data - The data of the scanned QR code.
+   */
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    console.log(data);
+    data = JSON.parse(data);
+    // console.log(data);
+    navigation.navigate("Passenger", {
+      ticketId: data,
+    });
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 
@@ -31,7 +47,8 @@ export default function QRScanner() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Header title={"QR Scanner"} />
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
@@ -42,10 +59,35 @@ export default function QRScanner() {
             title={"Tap to Scan Again"}
             onPress={() => setScanned(false)}
           />
-          <Button title={"Cancel"} onPress={() => navigation.goBack()} />
         </View>
       )}
-    </View>
+      <Pressable
+        style={{
+          width: 300,
+          backgroundColor: "white",
+          borderWidth: 1,
+          borderColor: "#2780e3",
+          padding: 15,
+          marginTop: 500,
+          marginLeft: "auto",
+          marginRight: "auto",
+          borderRadius: 6,
+        }}
+        title={"Cancel"}
+        onPress={() => navigation.goBack()}
+      >
+        <Text
+          style={{
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: 16,
+            color: "#2780e3",
+          }}
+        >
+          Cancel
+        </Text>
+      </Pressable>
+    </SafeAreaView>
   );
 }
 

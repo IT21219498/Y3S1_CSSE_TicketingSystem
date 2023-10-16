@@ -1,11 +1,19 @@
-const mongoose = require("mongoose");
-// const dotenv = require("dotenv");
+import mongoose from "mongoose";
 
+/**
+ * Connects to the MongoDB database using the provided URL.
+ * @async
+ * @function connectDB
+ * @throws {Error} If there is an error connecting to the database.
+ * @returns {Promise<void>} A Promise that resolves when the connection is established.
+ */
 const connectDB = async () => {
-  return mongoose
-    .connect(process.env.MONGODB_URL)
-    .then(() => console.log(`connetion to database established...`))
-    .catch((err) => console.log(err));
+  try {
+    await mongoose.connect(process.env.MONGODB_URL);
+    console.log(`Connection to database established...`);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-module.exports = connectDB;
+export default connectDB;
