@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/MainHeader";
@@ -15,6 +15,8 @@ import { Audio } from "expo-av";
  */
 const PassengersScreen = ({ route }) => {
   const [passengerCount, setPassengerCount] = useState(0);
+  const [scannedPassenger, setScannedPassenger] = useState(false);
+  const [passengerDetails, setPassengerDetails] = useState({});
   const { ticketId } = route.params;
   const navigation = useNavigation();
 
@@ -22,8 +24,21 @@ const PassengersScreen = ({ route }) => {
    * Plays a success sound when a journey is started successfully.
    * @returns {Promise<void>}
    */
-  const playSuccessSound = async () => {
-    const { sound } = await Audio.Sound.createAsync(require("../raw/ding.wav"));
+  const playSuccessSoundStart = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require("../raw/welcome.mp3")
+    );
+    await sound.playAsync();
+  };
+
+  const playSuccessSoundEnd1 = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require("../raw/thankyou.mp3")
+    );
+    await sound.playAsync();
+  };
+  const playSuccessSoundEnd2 = async () => {
+    const { sound } = await Audio.Sound.createAsync(require("../raw/bye.mp3"));
     await sound.playAsync();
   };
 
@@ -53,11 +68,21 @@ const PassengersScreen = ({ route }) => {
       })
         .then((res) => {
           console.log(res.data);
-          // add successfull sound
-          playSuccessSound();
+          setScannedPassenger(true);
+          setPassengerDetails(res.data.result);
+
+          if (res.data.result.inJourney === true) {
+            playSuccessSoundStart();
+          } else {
+            setTimeout(() => {
+              playSuccessSoundEnd2();
+            }, 2000); // delay execution of playSuccessSoundEnd2 by 3 seconds
+            playSuccessSoundEnd1();
+          }
         })
         .catch((err) => {
           console.log("Error", err);
+          setScannedPassenger(false);
           // add failure sound
           playFailureSound();
         });
@@ -67,15 +92,118 @@ const PassengersScreen = ({ route }) => {
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: "white", height: 1000 }}>
       <Header title={"Journey Details"} />
-      <View>
-        <Text>Passenger ID : {ticketId.id}</Text>
-      </View>
+
+      {scannedPassenger === true ? (
+        <>
+          <View
+            style={{
+              margin: 20,
+              backgroundColor: "green",
+              alignItems: "center",
+              borderRadius: 10,
+            }}
+          >
+            <Text style={{ fontFamily: "Poppins_600SemiBold", fontSize: 30 }}>
+              Valid Passenger..!
+            </Text>
+          </View>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: "black",
+              margin: 10,
+              borderRadius: 5,
+              padding: 10,
+            }}
+          >
+            <Text style={{ fontFamily: "Poppins_600SemiBold", fontSize: 30 }}>
+              Passenger Details
+            </Text>
+            <Text style={{ fontSize: 20, fontFamily: "Poppins_300Light" }}>
+              Passenger ID : {passengerDetails._id}
+            </Text>
+            <Text style={{ fontSize: 20, fontFamily: "Poppins_300Light" }}>
+              Passenger Name : {passengerDetails.name}
+            </Text>
+            <Text style={{ fontSize: 20, fontFamily: "Poppins_300Light" }}>
+              Passenger NIC : {passengerDetails.nic}
+            </Text>
+            <Text style={{ fontSize: 20, fontFamily: "Poppins_300Light" }}>
+              Passenger Account Balance : {passengerDetails.accBalance}
+            </Text>
+
+            {passengerDetails.inJourney === true ? (
+              <View
+                style={{
+                  borderRadius: 5,
+                  margin: 10,
+                  alignItems: "center",
+                  backgroundColor: "#2780e3",
+                  padding: 10,
+                }}
+              >
+                <Text
+                  style={{ fontSize: 20, fontFamily: "Poppins_600SemiBold" }}
+                >
+                  Status : Started Journey
+                </Text>
+              </View>
+            ) : (
+              <View
+                style={{
+                  borderRadius: 5,
+                  margin: 10,
+                  alignItems: "center",
+                  backgroundColor: "red",
+                  padding: 10,
+                }}
+              >
+                <Text
+                  style={{ fontSize: 20, fontFamily: "Poppins_600SemiBold" }}
+                >
+                  Status : End Journey
+                </Text>
+              </View>
+            )}
+          </View>
+        </>
+      ) : (
+        <>
+          <View
+            style={{
+              margin: 20,
+              backgroundColor: "red",
+              alignItems: "center",
+              borderRadius: 10,
+            }}
+          >
+            <Text style={{ fontFamily: "Poppins_600SemiBold", fontSize: 30 }}>
+              Invalid Passenger..!
+            </Text>
+          </View>
+
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: "#2780e3",
+              borderRadius: 10,
+              margin: 20,
+              alignItems: "center",
+            }}
+          >
+            <Image
+              style={{ width: 300, height: 300 }}
+              source={require("../assets/warn.jpg")}
+            />
+          </View>
+        </>
+      )}
 
       <View>
         <Pressable
-          onPress={() => navigation.navigate("Scanner")}
+          onPress={() => navigation.navigate("Main")}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Scan QR Code</Text>

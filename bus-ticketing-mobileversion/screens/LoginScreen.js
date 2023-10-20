@@ -71,7 +71,8 @@ const LoginScreen = () => {
     };
 
     checkLoginStatus();
-  }, []);
+    getUser();
+  }, [loginUser]);
 
   const getUser = async () => {
     axios({
@@ -103,11 +104,14 @@ const LoginScreen = () => {
         // console.log(res);
         setUserData(res.data.user);
         setLoginUser(res.data.user._id);
+        getUser();
         const token = res.data.jwtToken;
 
         AsyncStorage.setItem("authToken", token);
 
-        navigation.navigate("Main");
+        setTimeout(() => {
+          navigation.replace("Main");
+        }, 2000);
       })
       .catch((err) => {
         console.log("Error", err);

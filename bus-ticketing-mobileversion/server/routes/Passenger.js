@@ -296,7 +296,7 @@ router.put(
       passenger.transactions.push(savedTransaction._id);
       passenger.accBalance = Number(passenger.accBalance) + Number(accBalance);
 
-      const result = await Passenger.updateOne({ _id: id }, passenger);
+      const result = await Passenger.updateOne({ userId: id }, passenger);
       if (result.nModified === 0) {
         return res.status(400).json({ error: "Failed to update" });
       }
@@ -365,6 +365,8 @@ router.put("/startOrEndJourney/:id", authenticateToken, async (req, res) => {
       return res.status(200).json({
         result: {
           _id: passenger._id,
+          name: passenger.name,
+          nic: passenger.nic,
           journeyId: savedJourney._id,
           accBalance: passenger.accBalance,
           inJourney: passenger.inJourney,
@@ -407,6 +409,8 @@ router.put("/startOrEndJourney/:id", authenticateToken, async (req, res) => {
           _id: passenger._id,
           accBalance: passenger.accBalance,
           inJourney: passenger.inJourney,
+          name: passenger.name,
+          nic: passenger.nic,
         },
       });
     }
