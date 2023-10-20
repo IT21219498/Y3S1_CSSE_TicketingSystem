@@ -5,6 +5,7 @@ import { UserType } from "../context/UserContext";
 import jwt_decode from "jwt-decode";
 import Header from "../components/MainHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
 
 /**
  * Home screen component
@@ -13,7 +14,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { inJourney, setInJourney } = useContext(UserType);
-  const { userData, setUserData } = useContext(UserType);
+  const {
+    userData,
+    setUserData,
+    userDetails,
+    setUserDetails,
+    loginUser,
+    setLoginUser,
+  } = useContext(UserType);
   const { role = "Passenger" } = userData;
 
   /**
@@ -27,45 +35,74 @@ const HomeScreen = () => {
     }
   }
 
+  useEffect(() => {
+    const getUser = async () => {
+      axios({
+        method: "get",
+        url: `http://192.168.1.6:5000/api/getPassengerDetails/${loginUser}`,
+      })
+        .then((res) => {
+          setUserDetails(res.data);
+
+          console.log(userDetails.result.name);
+        })
+        .catch((err) => {
+          console.log("Error", err);
+        });
+    };
+
+    getUser();
+  }, [loginUser]);
+
   return (
-    <SafeAreaView style={{ backgroundColor: "white", height: 1000 }}>
+    <SafeAreaView style={styles.container}>
       <Header title={"Home"} />
       <View>
-        <Image
-          style={{
-            height: 200,
-            width: 400,
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}
-          source={require("../assets/bus1.png")}
-        />
+        <Image style={styles.image} source={require("../assets/bus1.png")} />
       </View>
+
+      {role !== "Driver" && (
+        <>
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ fontSize: 24, fontFamily: "Poppins_900Black" }}>
+              Welcome
+            </Text>
+            <Text style={{ fontSize: 24, fontFamily: "Poppins_900Black" }}>
+              {userDetails.result.name}..!
+            </Text>
+          </View>
+          {userDetails.result.inJourney == true && (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#008000",
+                margin: 20,
+                padding: 10,
+                borderRadius: 10,
+              }}
+            >
+              <Text style={{ fontFamily: "Poppins_500Medium", fontSize: 20 }}>
+                Your are in Journey
+              </Text>
+            </View>
+          )}
+        </>
+      )}
       <View>
         {role === "Driver" && (
           <>
             <Pressable
               onPress={() => handleJourney()}
-              style={{
-                width: 300,
-                backgroundColor: !inJourney ? "#2780e3" : "#d61f2c",
-                borderWidth: 1,
-                borderColor: !inJourney ? "#2780e3" : "#d61f2c",
-                padding: 15,
-                marginTop: 40,
-                marginLeft: "auto",
-                marginRight: "auto",
-                borderRadius: 6,
-              }}
+              style={[
+                styles.button,
+                {
+                  backgroundColor: !inJourney ? "#2780e3" : "#d61f2c",
+                  borderColor: !inJourney ? "#2780e3" : "#d61f2c",
+                },
+              ]}
             >
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: 16,
-                  color: "white",
-                }}
-              >
+              <Text style={styles.buttonText}>
                 {!inJourney ? "Start New Journey" : "End Journey"}
               </Text>
             </Pressable>
@@ -73,28 +110,9 @@ const HomeScreen = () => {
             {inJourney && (
               <Pressable
                 onPress={() => navigation.navigate("Scanner")}
-                style={{
-                  width: 200,
-                  backgroundColor: "white",
-                  borderWidth: 1,
-                  borderColor: "#2780e3",
-                  padding: 15,
-                  marginTop: 40,
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  borderRadius: 6,
-                }}
+                style={styles.scanButton}
               >
-                <Text
-                  style={{
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    fontSize: 16,
-                    color: "#2780e3",
-                  }}
-                >
-                  Scan QR Codes
-                </Text>
+                <Text style={styles.scanButtonText}>Scan QR Codes</Text>
               </Pressable>
             )}
           </>
@@ -103,53 +121,15 @@ const HomeScreen = () => {
           <>
             <Pressable
               onPress={() => navigation.navigate("Generator")}
-              style={{
-                width: 200,
-                backgroundColor: "white",
-                borderWidth: 1,
-                borderColor: "#2780e3",
-                padding: 15,
-                marginTop: 40,
-                marginLeft: "auto",
-                marginRight: "auto",
-                borderRadius: 6,
-              }}
+              style={styles.passengerButton}
             >
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: 16,
-                  color: "#2780e3",
-                }}
-              >
-                Generate QR Code
-              </Text>
+              <Text style={styles.passengerButtonText}>Generate QR Code</Text>
             </Pressable>
             <Pressable
               onPress={() => navigation.navigate("Payment")}
-              style={{
-                width: 200,
-                backgroundColor: "white",
-                borderWidth: 1,
-                borderColor: "#2780e3",
-                padding: 15,
-                marginTop: 40,
-                marginLeft: "auto",
-                marginRight: "auto",
-                borderRadius: 6,
-              }}
+              style={styles.passengerButton}
             >
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: 16,
-                  color: "#2780e3",
-                }}
-              >
-                Add Credit
-              </Text>
+              <Text style={styles.passengerButtonText}>Add Credit</Text>
             </Pressable>
           </>
         )}
@@ -160,4 +140,65 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    height: 1000,
+  },
+  image: {
+    height: 200,
+    width: 400,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  button: {
+    width: 300,
+    backgroundColor: "#2780e3",
+    borderWidth: 1,
+    padding: 15,
+    marginTop: 40,
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 6,
+  },
+  buttonText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "white",
+  },
+  scanButton: {
+    width: 200,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#2780e3",
+    padding: 15,
+    marginTop: 40,
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 6,
+  },
+  scanButtonText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#2780e3",
+  },
+  passengerButton: {
+    width: 200,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#2780e3",
+    padding: 15,
+    marginTop: 40,
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 6,
+  },
+  passengerButtonText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#2780e3",
+  },
+});

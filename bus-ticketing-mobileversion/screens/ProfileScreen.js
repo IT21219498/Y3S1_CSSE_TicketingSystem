@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View, Pressable, Image } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/MainHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserType } from "../context/UserContext";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
 /**
  * Profile screen component.
@@ -13,7 +14,15 @@ import { useNavigation } from "@react-navigation/native";
  */
 
 const ProfileScreen = () => {
-  const { userData, setUserData } = useContext(UserType);
+  const {
+    userData,
+    setUserData,
+    loginUser,
+    setLoginUser,
+    userDetails,
+    setUserDetails,
+  } = useContext(UserType);
+
   const navigation = useNavigation();
 
   /**
@@ -38,41 +47,47 @@ const ProfileScreen = () => {
     console.log("token removed");
   };
 
+  //api call to get user details
+
   return (
     <SafeAreaView style={{ backgroundColor: "white", height: 1000 }}>
       <Header title={"Profile"} />
       <View>
-        <Image
-          style={{
-            height: 240,
-            width: 400,
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}
-          source={require("../assets/bus3.jpg")}
-        />
+        <Image style={styles.image} source={require("../assets/bus3.jpg")} />
       </View>
-      <View
-        style={{
-          marginTop: 300,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {/* <Text>ProfileScreen</Text> */}
-        <Pressable
-          onPress={logout}
+
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <Text
           style={{
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 10,
-            borderColor: "#2780e3",
-            borderWidth: 1,
-            width: 300,
-            borderRadius: 5,
+            fontSize: 25,
+            marginLeft: 20,
+            fontFamily: "Poppins_900Black",
           }}
         >
-          <Text style={{ color: "#2780e3" }}>Logout</Text>
+          {userDetails.result.name}
+        </Text>
+      </View>
+
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          borderWidth: 1,
+          borderColor: "black",
+          margin: 20,
+        }}
+      >
+        <Text style={{ fontSize: 25, fontWeight: "bold", marginLeft: 20 }}>
+          Your Account Balance :
+        </Text>
+        <Text style={{ fontSize: 35, fontWeight: "bold", marginLeft: 20 }}>
+          Rs: {userDetails.result.accBalance}
+        </Text>
+      </View>
+      <View style={styles.container}>
+        {/* <Text>ProfileScreen</Text> */}
+        <Pressable onPress={logout} style={styles.button}>
+          <Text style={styles.buttonText}>Logout</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -81,4 +96,28 @@ const ProfileScreen = () => {
 
 export default ProfileScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  image: {
+    height: 240,
+    width: 400,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  container: {
+    marginTop: 150,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    borderColor: "#2780e3",
+    borderWidth: 1,
+    width: 300,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#2780e3",
+  },
+});

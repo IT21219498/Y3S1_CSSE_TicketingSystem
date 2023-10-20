@@ -1,6 +1,6 @@
 import express from "express";
 import morgan from "morgan";
-import connectDB from "./config/db.js";
+import "./config/db.js";
 import dotenv from "dotenv";
 import auth from "./middlewares/auth.js";
 import cors from "cors";
@@ -28,12 +28,10 @@ app.use("/api", passengerRouter);
  * The port number on which the server listens for incoming requests.
  * @type {number}
  */
-const PORT = process.env.PORT || 9000;
-app.listen(PORT, async () => {
-  try {
-    await connectDB();
-    console.log(`server listening on ${PORT}`);
-  } catch (err) {
-    console.log(err);
-  }
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
+
+export default app;

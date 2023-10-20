@@ -9,6 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
  * A functional component that generates a QR code for the user's ID.
  * @returns {JSX.Element} A React JSX element that displays the generated QR code.
  */
+
 const QRGenerator = () => {
   const { userData, setUserData } = useContext(UserType);
   // console.log("userData", userData);
@@ -23,12 +24,7 @@ const QRGenerator = () => {
           justifyContent: "center",
         }}
       >
-        <View
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <View style={styles.qrCodeContainer}>
           <QRCode
             value={JSON.stringify({
               id: userData._id,
@@ -41,6 +37,11 @@ const QRGenerator = () => {
   );
 };
 
-export default QRGenerator;
+const styles = StyleSheet.create({
+  qrCodeContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
-const styles = StyleSheet.create({});
+export default QRGenerator;

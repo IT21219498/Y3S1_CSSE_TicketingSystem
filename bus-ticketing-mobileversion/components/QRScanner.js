@@ -51,10 +51,10 @@ export default function QRScanner() {
       <Header title={"QR Scanner"} />
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
+        style={styles.barCodeScanner}
       />
       {scanned && (
-        <View>
+        <View style={styles.scanAgainButtonContainer}>
           <Button
             title={"Tap to Scan Again"}
             onPress={() => setScanned(false)}
@@ -62,30 +62,11 @@ export default function QRScanner() {
         </View>
       )}
       <Pressable
-        style={{
-          width: 300,
-          backgroundColor: "white",
-          borderWidth: 1,
-          borderColor: "#2780e3",
-          padding: 15,
-          marginTop: 500,
-          marginLeft: "auto",
-          marginRight: "auto",
-          borderRadius: 6,
-        }}
+        style={styles.cancelButton}
         title={"Cancel"}
         onPress={() => navigation.goBack()}
       >
-        <Text
-          style={{
-            textAlign: "center",
-            fontWeight: "bold",
-            fontSize: 16,
-            color: "#2780e3",
-          }}
-        >
-          Cancel
-        </Text>
+        <Text style={styles.cancelButtonText}>Cancel</Text>
       </Pressable>
     </SafeAreaView>
   );
@@ -96,5 +77,28 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
+  },
+  barCodeScanner: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  scanAgainButtonContainer: {
+    marginTop: 20,
+  },
+  cancelButton: {
+    width: 300,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#2780e3",
+    padding: 15,
+    marginTop: 500,
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 6,
+  },
+  cancelButtonText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#2780e3",
   },
 });

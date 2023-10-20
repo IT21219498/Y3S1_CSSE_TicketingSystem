@@ -14,10 +14,21 @@ const UserType = createContext();
 const UserContext = ({ children }) => {
   const [userData, setUserData] = useState("");
   const [inJourney, setInJourney] = useState(false);
+  const [loginUser, setLoginUser] = useState("652ce128e567967469d195ad");
+  const [userDetails, setUserDetails] = useState("");
 
   return (
     <UserType.Provider
-      value={{ userData, setUserData, inJourney, setInJourney }}
+      value={{
+        userData,
+        setUserData,
+        inJourney,
+        setInJourney,
+        loginUser,
+        setLoginUser,
+        userDetails,
+        setUserDetails,
+      }}
     >
       {children}
     </UserType.Provider>

@@ -269,32 +269,32 @@ router.put(
   //  authenticateToken,
   async (req, res) => {
     const { id } = req.params;
-    const { amount, type } = req.body;
+    const { accBalance, type } = req.body;
     if (!id) return res.status(400).json({ error: "no id specified." });
 
     if (!mongoose.isValidObjectId(id))
       return res.status(400).json({ error: "please enter a valid id" });
 
-    if (amount === "" || amount === undefined)
+    if (accBalance === "" || accBalance === undefined)
       return res.status(400).json({ error: "amount not recieved" });
 
     if (type === "" || type === undefined)
       return res.status(400).json({ error: "type not recieved" });
 
     try {
-      let passenger = await Passenger.findOne({ _id: id });
+      let passenger = await Passenger.findOne({ userId: id });
 
       if (!passenger)
         return res.status(400).json({ error: "Passenger not found" });
 
       let transaction = await Transaction.create({
-        amount: amount,
+        amount: accBalance,
         type: type,
       });
       let savedTransaction = await transaction.save();
 
       passenger.transactions.push(savedTransaction._id);
-      passenger.accBalance = Number(passenger.accBalance) + Number(amount);
+      passenger.accBalance = Number(passenger.accBalance) + Number(accBalance);
 
       const result = await Passenger.updateOne({ _id: id }, passenger);
       if (result.nModified === 0) {
@@ -410,6 +410,17 @@ router.put("/startOrEndJourney/:id", authenticateToken, async (req, res) => {
         },
       });
     }
+  } catch (err) {
+    return res.status(400).json({ error: "Unknown Error Occured" });
+  }
+});
+
+//route for get specific passenger details
+router.get("/getPassengerDetails/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await Passenger.findOne({ userId: id });
+    return res.status(200).json({ result });
   } catch (err) {
     return res.status(400).json({ error: "Unknown Error Occured" });
   }

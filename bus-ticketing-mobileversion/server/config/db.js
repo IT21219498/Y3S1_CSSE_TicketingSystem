@@ -1,19 +1,27 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
 /**
- * Connects to the MongoDB database using the provided URL.
- * @async
- * @function connectDB
- * @throws {Error} If there is an error connecting to the database.
- * @returns {Promise<void>} A Promise that resolves when the connection is established.
+ * Represents a singleton instance of a database connection.
+ * @class
  */
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URL);
-    console.log(`Connection to database established...`);
-  } catch (err) {
-    console.log(err);
-  }
-};
+class DatabaseSingleton {
+  constructor() {
+    if (!DatabaseSingleton.instance) {
+      dotenv.config();
+      // Initialize the database connection
+      mongoose
+        .connect(process.env.MONGODB_URL)
 
-export default connectDB;
+        .then(() => console.log(`connetion to database established...`))
+
+        .catch((err) => console.log(err));
+
+      DatabaseSingleton.instance = this;
+    }
+
+    return DatabaseSingleton.instance;
+  }
+}
+
+export default new DatabaseSingleton();

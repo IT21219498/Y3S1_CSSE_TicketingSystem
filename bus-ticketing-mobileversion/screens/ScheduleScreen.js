@@ -8,19 +8,12 @@ import Header from "../components/MainHeader";
  *
  * @returns {JSX.Element} The ScheduleScreen component.
  */
+
 const ScheduleScreen = () => {
   return (
-    <SafeAreaView style={{ backgroundColor: "white", height: 1000 }}>
+    <SafeAreaView style={styles.container}>
       <Header title={" Bus Schedules"} />
-      <Image
-        style={{
-          height: 200,
-          width: 400,
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-        source={require("../assets/bus2.jpg")}
-      />
+      <Image style={styles.image} source={require("../assets/bus2.jpg")} />
       <View>
         <Text>ScheduleScreen</Text>
       </View>
@@ -30,4 +23,15 @@ const ScheduleScreen = () => {
 
 export default ScheduleScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    height: 1000,
+  },
+  image: {
+    height: 200,
+    width: 400,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+});

@@ -24,10 +24,6 @@ import PassengerDetails from "../components/PassengerDetails";
 import PaymentDetails from "../components/PaymentDetails";
 import { BASE_URL } from "@env";
 
-/**
- * Functional component for the Register Screen.
- * @returns {JSX.Element} JSX element containing the Register Screen UI.
- */
 const RegisterScreen = () => {
   const [userData, setUserData] = useState({
     name: "",
@@ -44,12 +40,6 @@ const RegisterScreen = () => {
   const navigation = useNavigation();
   const [currentPage, setCurrentPage] = useState(1);
 
-  /**
-   * Handles the registration process when the Register button is pressed.
-   * Sends a POST request to the server to create a new permanent passenger account.
-   * Navigates to the Login Screen upon successful registration.
-   * Displays an error message if registration fails.
-   */
   const handleRegister = () => {
     console.log(userData);
     if (
@@ -65,14 +55,13 @@ const RegisterScreen = () => {
       return;
     }
 
-    //check if the password and confirm password match
     if (userData.password !== userData.confirmPassword) {
       Alert.alert("password do not match");
       return;
     }
 
     axios
-      .post(`${BASE_URL}/createPermanantPassenger`, userData)
+      .post(`http://192.168.1.6:5000/api/createPermanantPassenger`, userData)
       .then((res) => {
         console.log(res);
         Alert.alert("Passenger Registered Successfully");
@@ -84,11 +73,6 @@ const RegisterScreen = () => {
       });
   };
 
-  /**
-   * Handles the page number when the Next or Back button is pressed.
-   * Toggles between page 1 and page 2.
-   * @param {Object} event - The event object.
-   */
   function pageNumberHandler(event) {
     if (currentPage === 1) {
       setCurrentPage(2);
@@ -98,23 +82,16 @@ const RegisterScreen = () => {
   }
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
-    >
-      <View style={{ marginTop: 10 }}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.logoContainer}>
         <Image
-          style={{
-            width: 240,
-            height: 120,
-            resizeMode: "contain",
-            // tintColor: "black",
-          }}
+          style={styles.logo}
           source={require("../assets/logo/logo2.png")}
         />
       </View>
 
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ fontSize: 17, fontWeight: "bold", marginTop: 1 }}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>
           {currentPage === 1 ? "Enter Your Details" : "Enter Payment Details"}
         </Text>
       </View>
@@ -126,62 +103,31 @@ const RegisterScreen = () => {
         <PaymentDetails userData={userData} setUserData={setUserData} />
       )}
 
-      <View style={{ marginTop: 1, marginBottom: 10 }}>
+      <View
+        style={
+          currentPage === 1 ? styles.buttonContainer1 : styles.buttonContainer2
+        }
+      >
         {currentPage === 2 && (
-          <Pressable
-            onPress={handleRegister}
-            style={{
-              width: 200,
-              backgroundColor: "#0718C4",
-              padding: 15,
-              marginTop: 80,
-              marginLeft: "auto",
-              marginRight: "auto",
-              borderRadius: 6,
-            }}
-          >
-            <Text
-              style={{
-                textAlign: "center",
-                fontWeight: "bold",
-                fontSize: 16,
-                color: "white",
-              }}
-            >
-              Register
-            </Text>
+          <Pressable onPress={handleRegister} style={styles.registerButton}>
+            <Text style={styles.registerButtonText}>Register</Text>
           </Pressable>
         )}
         <Pressable
           onPress={(event) => pageNumberHandler(event)}
-          style={{
-            width: 200,
-            backgroundColor: "#0718C4",
-            padding: 15,
-            marginTop: 20,
-            marginLeft: "auto",
-            marginRight: "auto",
-            borderRadius: 6,
-          }}
+          style={styles.nextButton}
         >
-          <Text
-            style={{
-              textAlign: "center",
-              fontWeight: "bold",
-              fontSize: 16,
-              color: "white",
-            }}
-          >
+          <Text style={styles.nextButtonText}>
             {currentPage === 1 ? "Next" : "Back"}
           </Text>
         </Pressable>
         <Pressable
           onPress={() => navigation.goBack()}
-          style={{ marginTop: 10 }}
+          style={styles.signInButton}
         >
-          <Text style={{ textAlign: "center", fontSize: 16 }}>
+          <Text style={styles.signInButtonText}>
             Already have an account?{" "}
-            <Text style={{ color: "#007FFF", marginLeft: 10 }}>Sign In</Text>
+            <Text style={styles.signInLink}>Sign In</Text>
           </Text>
         </Pressable>
       </View>
@@ -191,4 +137,78 @@ const RegisterScreen = () => {
 
 export default RegisterScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+    alignItems: "center",
+  },
+  logoContainer: {
+    marginTop: 10,
+  },
+  logo: {
+    width: 240,
+    height: 120,
+    resizeMode: "contain",
+    // tintColor: "black",
+  },
+  titleContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: "bold",
+    marginTop: 1,
+  },
+  buttonContainer1: {
+    marginTop: 1,
+    marginBottom: 10,
+  },
+  buttonContainer2: {
+    marginTop: -140,
+    marginBottom: 10,
+  },
+  registerButton: {
+    width: 200,
+    backgroundColor: "#0718C4",
+    padding: 15,
+    marginTop: 80,
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 6,
+  },
+  registerButtonText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "white",
+  },
+  nextButton: {
+    width: 200,
+    backgroundColor: "#0718C4",
+    padding: 15,
+    marginTop: 20,
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 6,
+    marginBottom: 10,
+  },
+  nextButtonText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "white",
+  },
+  signInButton: {
+    marginTop: 10,
+  },
+  signInButtonText: {
+    textAlign: "center",
+    fontSize: 16,
+  },
+  signInLink: {
+    color: "#007FFF",
+    marginLeft: 10,
+  },
+});

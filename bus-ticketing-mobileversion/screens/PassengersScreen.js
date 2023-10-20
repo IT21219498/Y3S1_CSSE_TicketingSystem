@@ -46,7 +46,7 @@ const PassengersScreen = ({ route }) => {
       const token = await AsyncStorage.getItem("authToken");
       axios({
         method: "put",
-        url: `http://192.168.1.22:5000/api/startOrEndJourney/${Id}`,
+        url: `http://192.168.1.6:5000/api/startOrEndJourney/${Id}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -76,34 +76,33 @@ const PassengersScreen = ({ route }) => {
       <View>
         <Pressable
           onPress={() => navigation.navigate("Scanner")}
-          style={{
-            width: 200,
-            backgroundColor: "white",
-            borderWidth: 1,
-            borderColor: "#2780e3",
-            padding: 15,
-            marginTop: 40,
-            marginLeft: "auto",
-            marginRight: "auto",
-            borderRadius: 6,
-          }}
+          style={styles.button}
         >
-          <Text
-            style={{
-              textAlign: "center",
-              fontWeight: "bold",
-              fontSize: 16,
-              color: "#2780e3",
-            }}
-          >
-            Scan QR Code
-          </Text>
+          <Text style={styles.buttonText}>Scan QR Code</Text>
         </Pressable>
       </View>
     </SafeAreaView>
   );
 };
 
-export default PassengersScreen;
+const styles = StyleSheet.create({
+  button: {
+    width: 200,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#2780e3",
+    padding: 15,
+    marginTop: 40,
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 6,
+  },
+  buttonText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#2780e3",
+  },
+});
 
-const styles = StyleSheet.create({});
+export default PassengersScreen;

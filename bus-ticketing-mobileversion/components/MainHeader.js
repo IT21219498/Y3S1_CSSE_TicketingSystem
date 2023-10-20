@@ -16,52 +16,19 @@ import { FontAwesome } from "@expo/vector-icons";
  * @param {string} props.title - The title of the header.
  * @returns {JSX.Element} - The JSX code that renders the main header.
  */
+
 const Header = ({ title }) => {
   const navigation = useNavigation();
   return (
-    <View
-      style={{
-        backgroundColor: "#0718C4",
-        flexDirection: "row",
-        alignItems: "center",
-      }}
-    >
-      {/* <View style={{ marginLeft: 10 }}>
-          <TouchableOpacity onPress={() => navigation.openDrawer()}>
-            <FontAwesome name='user-circle' size={30} color='black' />
-          </TouchableOpacity>
-        </View> */}
-      <View
-        style={{
-          flex: 1, // Take up available space
-          padding: 2,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
         <Image
-          //   source={{
-          //     uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Booking.com_logo.svg/2560px-Booking.com_logo.svg.png",
-          //   }}
-
           source={require("../assets/logo/logo2.png")}
-          style={styles.headerImage}
+          style={styles.logo}
         />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontFamily: "Poppins_700Bold",
-          }}
-        >
-          {title}
-        </Text>
+        <Text style={styles.title}>{title}</Text>
       </View>
-      <View style={{ marginRight: 10 }}>
-        {/* <TouchableOpacity onPress={() => navigation.navigate("MyAppointments")}>
-            <FontAwesome name='bell' size={30} color='black' marginRight='10' />
-          </TouchableOpacity> */}
-      </View>
+      <View style={styles.rightContainer}></View>
     </View>
   );
 };
@@ -69,10 +36,28 @@ const Header = ({ title }) => {
 export default Header;
 
 const styles = StyleSheet.create({
-  headerImage: {
-    width: 200, // Adjust the image width as needed
-    height: 35, // Adjust the image height as needed
-    resizeMode: "contain", // Makes sure the image doesn't get distorted
-    // tintColor: "black",
+  container: {
+    backgroundColor: "#0718C4",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  logoContainer: {
+    flex: 1,
+    padding: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logo: {
+    width: 200,
+    height: 35,
+    resizeMode: "contain",
+  },
+  title: {
+    color: "white",
+    fontSize: 20,
+    fontFamily: "Poppins_700Bold",
+  },
+  rightContainer: {
+    marginRight: 10,
   },
 });

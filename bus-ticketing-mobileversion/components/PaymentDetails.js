@@ -49,22 +49,12 @@ const PaymentDetails = ({ userData, setUserData }) => {
   };
 
   return (
-    <View style={{ marginBottom: 250 }}>
-      <KeyboardAvoidingView style={{ alignItems: "center", marginBottom: 30 }}>
-        <View style={{ marginTop: 40 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5,
-              borderColor: "#2780e3",
-              borderWidth: 1,
-              paddingVertical: 5,
-              borderRadius: 5,
-            }}
-          >
+    <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.keyboardAvoidingView}>
+        <View style={styles.creditAmountContainer}>
+          <View style={styles.creditAmountInputContainer}>
             <FontAwesome
-              style={{ marginLeft: 8, marginRight: 8 }}
+              style={styles.creditAmountIcon}
               name='money'
               size={24}
               color='#2780e3'
@@ -74,89 +64,52 @@ const PaymentDetails = ({ userData, setUserData }) => {
               value={userData.accBalance}
               onChangeText={(value) => handleInputChange("accBalance", value)}
               placeholderTextColor={"#2780e3"}
-              style={{
-                color: "gray",
-                marginVertical: 10,
-                width: 300,
-                fontSize: userData.accBalance ? 16 : 16,
-              }}
+              style={[
+                styles.creditAmountInput,
+                {
+                  fontSize: userData.accBalance ? 16 : 16,
+                },
+              ]}
               placeholder='Enter credit amount'
             />
           </View>
         </View>
-        <View style={{ marginTop: 30 }}>
-          <Text>Select Your Card Type</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginTop: 10,
-            }}
-          >
+        <View style={styles.cardTypeContainer}>
+          <Text style={styles.cardTypeText}>Select Your Card Type</Text>
+          <View style={styles.cardTypeOptionsContainer}>
             <Pressable
               onPress={handlePayment}
-              style={{
-                borderRadius: 10,
-                overflow: "hidden",
-                borderWidth: 1,
-                borderColor: "#2780e3",
-                marginRight: 10,
-              }}
+              style={styles.cardTypeOptionContainer}
             >
               <Image
-                source={{
-                  uri: "https://1000logos.net/wp-content/uploads/2021/11/VISA-logo.png",
-                }}
-                style={{ width: 100, height: 50 }}
+                source={require("../assets/amex.jpg")}
+                style={styles.cardTypeOptionImage}
               />
             </Pressable>
             <Pressable
               onPress={handlePayment}
-              style={{
-                borderRadius: 10,
-                overflow: "hidden",
-                borderWidth: 1,
-                borderColor: "#2780e3",
-                marginRight: 10,
-              }}
+              style={styles.cardTypeOptionContainer}
             >
               <Image
-                source={{
-                  uri: "https://www.investopedia.com/thmb/F8CKM3YkF1fmnRCU2g4knuK0eDY=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/MClogo-c823e495c5cf455c89ddfb0e17fc7978.jpg",
-                }}
-                style={{ width: 100, height: 50 }}
+                source={require("../assets/master.jpg")}
+                style={styles.cardTypeOptionImage}
               />
             </Pressable>
             <Pressable
               onPress={handlePayment}
-              style={{
-                borderRadius: 10,
-                overflow: "hidden",
-                borderWidth: 1,
-                borderColor: "#2780e3",
-              }}
+              style={styles.cardTypeOptionContainer}
             >
               <Image
-                source={{
-                  uri: "https://logowik.com/content/uploads/images/amex-card1708.jpg",
-                }}
-                style={{ width: 100, height: 50 }}
+                source={require("../assets/visa.png")}
+                style={styles.cardTypeOptionImage}
               />
             </Pressable>
           </View>
         </View>
       </KeyboardAvoidingView>
       {success && (
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <Text
-            style={{
-              fontFamily: "Poppins_800ExtraBold",
-              color: "#53a653",
-              fontSize: 30,
-            }}
-          >
-            Card Details Added !
-          </Text>
+        <View style={styles.successContainer}>
+          <Text style={styles.successText}>Card Details Added !</Text>
         </View>
       )}
 
@@ -171,4 +124,63 @@ const PaymentDetails = ({ userData, setUserData }) => {
 
 export default PaymentDetails;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 250,
+  },
+  keyboardAvoidingView: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  creditAmountContainer: {
+    marginTop: 40,
+  },
+  creditAmountInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    borderColor: "#2780e3",
+    borderWidth: 1,
+    paddingVertical: 5,
+    borderRadius: 5,
+  },
+  creditAmountIcon: {
+    marginLeft: 8,
+    marginRight: 8,
+  },
+  creditAmountInput: {
+    color: "gray",
+    marginVertical: 10,
+    width: 300,
+  },
+  cardTypeContainer: {
+    marginTop: 30,
+  },
+  cardTypeText: {
+    marginBottom: 10,
+  },
+  cardTypeOptionsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  cardTypeOptionContainer: {
+    borderRadius: 10,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#2780e3",
+    marginRight: 10,
+  },
+  cardTypeOptionImage: {
+    width: 100,
+    height: 50,
+  },
+  successContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  successText: {
+    fontFamily: "Poppins_800ExtraBold",
+    color: "#53a653",
+    fontSize: 30,
+  },
+});
