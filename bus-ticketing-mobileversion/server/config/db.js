@@ -1,10 +1,7 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-/**
- * Represents a singleton instance of a database connection.
- * @class
- */
+// Singleton class for database connection
 class DatabaseSingleton {
   constructor() {
     if (!DatabaseSingleton.instance) {
@@ -12,14 +9,10 @@ class DatabaseSingleton {
       // Initialize the database connection
       mongoose
         .connect(process.env.MONGODB_URL)
-
         .then(() => console.log(`connetion to database established...`))
-
         .catch((err) => console.log(err));
-
       DatabaseSingleton.instance = this;
     }
-
     return DatabaseSingleton.instance;
   }
 }
