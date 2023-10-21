@@ -21,7 +21,8 @@ import { Alert } from "react-native";
  * @returns {JSX.Element} Payment screen UI.
  */
 const PaymentScreen = () => {
-  const { loginUser, setLoginUser } = useContext(UserType);
+  const { loginUser, setLoginUser, userDetails, setUserDetails } =
+    useContext(UserType);
   const [userData, setUserData] = useState({
     accBalance: "",
     type: "ONLINE",
@@ -32,14 +33,39 @@ const PaymentScreen = () => {
     axios
       .put(`http://192.168.1.6:5000/api/addTransaction/${loginUser}`, userData)
       .then((res) => {
+        if (res.error) {
+          console.log(res.error);
+          Alert.alert("Payment Failed");
+          return;
+        }
         console.log(res.data);
         userData.accBalance = "";
         setUserData(userData);
+        getUser();
         Alert.alert("Payment Successful");
       })
       .catch((err) => {
         console.log(err);
         Alert.alert("Payment Failed");
+      });
+  };
+
+  const getUser = async () => {
+    axios({
+      method: "get",
+      url: `http://192.168.1.6:5000/api/getPassengerDetails/${loginUser}`,
+    })
+      .then((res) => {
+        setUserDetails(res.data);
+        console.log(
+          "🚀 ~ file: PaymentScreen.js:55 ~ .then ~ res.data:",
+          res.data
+        );
+
+        // console.log(userDetails.result.name);
+      })
+      .catch((err) => {
+        console.log("Error", err);
       });
   };
   return (

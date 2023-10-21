@@ -14,7 +14,7 @@ const UserType = createContext();
 const UserContext = ({ children }) => {
   const [userData, setUserData] = useState("");
   const [inJourney, setInJourney] = useState(false);
-  const [loginUser, setLoginUser] = useState("652ce128e567967469d195ad");
+  const [loginUser, setLoginUser] = useState("");
   const [userDetails, setUserDetails] = useState("");
 
   return (

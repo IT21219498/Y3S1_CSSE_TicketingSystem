@@ -25,6 +25,8 @@ const ProfileScreen = () => {
 
   const navigation = useNavigation();
 
+  const { role = "Passenger" } = userData;
+
   /**
    * Logout function.
    * @function logout
@@ -56,34 +58,38 @@ const ProfileScreen = () => {
         <Image style={styles.image} source={require("../assets/bus3.jpg")} />
       </View>
 
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{
-            fontSize: 25,
-            marginLeft: 20,
-            fontFamily: "Poppins_900Black",
-          }}
-        >
-          {userDetails.result.name}
-        </Text>
-      </View>
+      {role === "Passenger" && (
+        <>
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <Text
+              style={{
+                fontSize: 25,
+                marginLeft: 20,
+                fontFamily: "Poppins_900Black",
+              }}
+            >
+              {userDetails.result.name}
+            </Text>
+          </View>
 
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          borderWidth: 1,
-          borderColor: "black",
-          margin: 20,
-        }}
-      >
-        <Text style={{ fontSize: 25, fontWeight: "bold", marginLeft: 20 }}>
-          Your Account Balance :
-        </Text>
-        <Text style={{ fontSize: 35, fontWeight: "bold", marginLeft: 20 }}>
-          Rs: {userDetails.result.accBalance}
-        </Text>
-      </View>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              borderWidth: 1,
+              borderColor: "black",
+              margin: 20,
+            }}
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold", marginLeft: 20 }}>
+              Your Account Balance :
+            </Text>
+            <Text style={{ fontSize: 35, fontWeight: "bold", marginLeft: 20 }}>
+              Rs: {userDetails.result.accBalance}
+            </Text>
+          </View>
+        </>
+      )}
       <View style={styles.container}>
         {/* <Text>ProfileScreen</Text> */}
         <Pressable onPress={logout} style={styles.button}>

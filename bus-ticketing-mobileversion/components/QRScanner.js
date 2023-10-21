@@ -36,7 +36,7 @@ export default function QRScanner() {
     navigation.navigate("Passenger", {
       ticketId: data,
     });
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    alert(`Bar code has been scanned!`);
   };
 
   if (hasPermission === null) {
