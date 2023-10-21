@@ -61,7 +61,7 @@ const PassengersScreen = ({ route }) => {
       const token = await AsyncStorage.getItem("authToken");
       axios({
         method: "put",
-        url: `http://192.168.1.6:5000/api/startOrEndJourney/${Id}`,
+        url: `http://192.168.1.22:5000/api/startOrEndJourney/${Id}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },

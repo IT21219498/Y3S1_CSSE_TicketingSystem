@@ -46,7 +46,7 @@ const LoginScreen = () => {
       if (token) {
         axios({
           method: "get",
-          url: `http://192.168.1.6:5000/api/me`,
+          url: `http://192.168.1.22:5000/api/me`,
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -77,7 +77,7 @@ const LoginScreen = () => {
   const getUser = async () => {
     axios({
       method: "get",
-      url: `http://192.168.1.6:5000/api/getPassengerDetails/${loginUser}`,
+      url: `http://192.168.1.22:5000/api/getPassengerDetails/${loginUser}`,
     })
       .then((res) => {
         setUserDetails(res.data);
@@ -97,7 +97,7 @@ const LoginScreen = () => {
 
     axios({
       method: "post",
-      url: `http://192.168.1.6:5000/api/login`,
+      url: `http://192.168.1.22:5000/api/login`,
       data: user,
     })
       .then((res) => {

@@ -31,7 +31,7 @@ const PaymentScreen = () => {
   const handlePayment = () => {
     //add payment logic
     axios
-      .put(`http://192.168.1.6:5000/api/addTransaction/${loginUser}`, userData)
+      .put(`http://192.168.1.22:5000/api/addTransaction/${loginUser}`, userData)
       .then((res) => {
         if (res.error) {
           console.log(res.error);
@@ -53,7 +53,7 @@ const PaymentScreen = () => {
   const getUser = async () => {
     axios({
       method: "get",
-      url: `http://192.168.1.6:5000/api/getPassengerDetails/${loginUser}`,
+      url: `http://192.168.1.22:5000/api/getPassengerDetails/${loginUser}`,
     })
       .then((res) => {
         setUserDetails(res.data);

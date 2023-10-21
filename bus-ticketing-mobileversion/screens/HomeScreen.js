@@ -39,7 +39,7 @@ const HomeScreen = () => {
     const getUser = async () => {
       axios({
         method: "get",
-        url: `http://192.168.1.6:5000/api/getPassengerDetails/${loginUser}`,
+        url: `http://192.168.1.22:5000/api/getPassengerDetails/${loginUser}`,
       })
         .then((res) => {
           setUserDetails(res.data);
@@ -63,28 +63,15 @@ const HomeScreen = () => {
 
       {role !== "Driver" && (
         <>
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ fontSize: 24, fontFamily: "Poppins_900Black" }}>
-              Welcome
-            </Text>
-            <Text style={{ fontSize: 24, fontFamily: "Poppins_900Black" }}>
-              {userDetails.result.name}..!
+          <View style={styles.welcomeView}>
+            <Text style={styles.welcomeText}>Welcome</Text>
+            <Text style={styles.welcomeText}>
+              {userDetails && userDetails.result.name}..!
             </Text>
           </View>
-          {userDetails.result.inJourney == true && (
-            <View
-              style={{
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#008000",
-                margin: 20,
-                padding: 10,
-                borderRadius: 10,
-              }}
-            >
-              <Text style={{ fontFamily: "Poppins_500Medium", fontSize: 20 }}>
-                Your are in Journey
-              </Text>
+          {userDetails && userDetails.result.inJourney == true && (
+            <View style={styles.journeyView}>
+              <Text style={styles.journeyText}>Your are in Journey</Text>
             </View>
           )}
         </>
@@ -201,4 +188,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#2780e3",
   },
+  welcomeView: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontFamily: "Poppins_900Black",
+  },
+  journeyView: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#008000",
+    margin: 20,
+    padding: 10,
+    borderRadius: 10,
+  },
+  journeyText: { fontFamily: "Poppins_500Medium", fontSize: 20 },
 });

@@ -15,7 +15,7 @@ const UserContext = ({ children }) => {
   const [userData, setUserData] = useState("");
   const [inJourney, setInJourney] = useState(false);
   const [loginUser, setLoginUser] = useState("");
-  const [userDetails, setUserDetails] = useState("");
+  const [userDetails, setUserDetails] = useState({});
 
   return (
     <UserType.Provider

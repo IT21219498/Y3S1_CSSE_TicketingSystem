@@ -61,7 +61,7 @@ const RegisterScreen = () => {
     }
 
     axios
-      .post(`http://192.168.1.6:5000/api/createPermanantPassenger`, userData)
+      .post(`http://192.168.1.22:5000/api/createPermanantPassenger`, userData)
       .then((res) => {
         console.log(res);
         Alert.alert("Passenger Registered Successfully");
